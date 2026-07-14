@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF RAG Chatbot Agent</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Panel: Upload & Config -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-brain-circuit brain-icon"></i>
+                    <span>PDF.RAG</span>
+                </div>
+                <p class="tagline">Cognitive PDF Assistant</p>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="section-container">
+                <h2 class="section-title"><i class="fa-solid fa-file-arrow-up"></i> Document Source</h2>
+                <div class="upload-dropzone" id="dropzone">
+                    <input type="file" id="fileInput" accept=".pdf" hidden />
+                    <div class="dropzone-content">
+                        <i class="fa-solid fa-file-pdf pdf-upload-icon"></i>
+                        <p class="primary-text">Drag & drop your PDF here</p>
+                        <p class="secondary-text">or click to browse local files</p>
+                    </div>
+                </div>
+
+                <div class="file-details" id="fileDetails" style="display: none;">
+                    <div class="file-info-header">
+                        <i class="fa-solid fa-file-invoice file-icon"></i>
+                        <div class="file-meta">
+                            <span class="file-name" id="fileName">document.pdf</span>
+                            <span class="file-size" id="fileSize">0 KB</span>
+                        </div>
+                        <button class="remove-btn" id="removeFileBtn"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p class="status-text" id="statusText">Ready to upload</p>
+                </div>
+            </div>
+
+            <!-- Configuration Readout -->
+            <div class="section-container">
+                <h2 class="section-title"><i class="fa-solid fa-sliders"></i> Retrieval Config</h2>
+                <div class="config-display">
+                    <div class="config-item">
+                        <span class="config-label">Similarity Threshold</span>
+                        <span class="config-value badge">Min 0.20</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Retrieval Limit (k)</span>
+                        <span class="config-value badge">Top 5 Chunks</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Model Engine</span>
+                        <span class="config-value badge">Llama 3 (Groq)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Meta -->
+            <div class="sidebar-footer">
+                <span><i class="fa-solid fa-shield-halved"></i> Local Vector Indexing</span>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- Top bar -->
+            <header class="chat-header">
+                <div class="active-doc-info">
+                    <span class="pulse-indicator offline" id="docPulse"></span>
+                    <span class="active-doc-name" id="activeDocName">No document loaded</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="clearChatBtn" title="Clear Chat History"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </header>
+
+            <!-- Chat Message Feed -->
+            <section class="chat-feed" id="chatFeed">
+                <!-- Welcome Message -->
+                <div class="welcome-container" id="welcomeContainer">
+                    <div class="welcome-card">
+                        <div class="avatar-large">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <h1>Welcome to PDF RAG Agent</h1>
+                        <p>Upload a document on the left panel. Once indexed into the local FAISS store, you can query it here. The chatbot will search the document and cite pages and similarity scores.</p>
+                        
+                        <div class="feature-highlights">
+                            <div class="highlight-item">
+                                <i class="fa-solid fa-magnifying-glass-location"></i>
+                                <h3>Semantic Retrieval</h3>
+                                <p>Finds accurate answers using sentence embedding models.</p>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fa-solid fa-list-ol"></i>
+                                <h3>Page Citations</h3>
+                                <p>Cites the exact pages where the information is written.</p>
+                            </div>
+                            <div class="highlight-item">
+                                <i class="fa-solid fa-chart-line"></i>
+                                <h3>Similarity Scores</h3>
+                                <p>Shows exact cosine similarity metrics and distances.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Input area -->
+            <footer class="chat-input-area">
+                <form class="chat-form" id="chatForm">
+                    <input type="text" id="userInput" placeholder="Ask a question about the indexed PDF..." required disabled />
+                    <button type="submit" id="sendBtn" class="send-btn" disabled>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+                <div class="input-note">
+                    Answers are strictly restricted to the context of the uploaded document.
+                </div>
+            </footer>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
