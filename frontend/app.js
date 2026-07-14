@@ -162,6 +162,12 @@ function uploadFile(file) {
                 sendBtn.disabled = false;
                 userInput.placeholder = "Ask a question about this document...";
                 userInput.focus();
+
+                // Clear previous chat feed / welcome screen
+                chatFeed.innerHTML = '';
+
+                // Append RAG system ready message
+                appendMessage('bot', `Hello! Your RAG system is ready for "${response.filename}". Feel free to ask any questions related to this PDF!`);
             } catch (err) {
                 handleUploadFailure('Invalid server response format.');
             }
