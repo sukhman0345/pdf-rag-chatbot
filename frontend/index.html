@@ -61,15 +61,27 @@
                 <div class="config-display">
                     <div class="config-item">
                         <span class="config-label">Similarity Threshold</span>
-                        <span class="config-value badge">Min 0.20</span>
+                        <span class="config-value badge" id="uiThreshold">...</span>
                     </div>
                     <div class="config-item">
                         <span class="config-label">Retrieval Limit (k)</span>
-                        <span class="config-value badge">Top 5 Chunks</span>
+                        <span class="config-value badge" id="uiTopK">...</span>
                     </div>
                     <div class="config-item">
                         <span class="config-label">Model Engine</span>
-                        <span class="config-value badge">Llama 3 (Groq)</span>
+                        <span class="config-value badge" id="uiModel" style="max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Embedding Model</span>
+                        <span class="config-value badge" id="uiEmbedding" style="max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">...</span>
+                    </div>
+                    <div class="config-item">
+                        <span class="config-label">Chunk Size / Overlap</span>
+                        <span class="config-value badge" id="uiChunkInfo">...</span>
+                    </div>
+                    <div class="config-item" id="sessionConfigItem" style="display: none;">
+                        <span class="config-label">Session ID</span>
+                        <span class="config-value badge" id="sessionValue" style="max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Not Active</span>
                     </div>
                 </div>
             </div>

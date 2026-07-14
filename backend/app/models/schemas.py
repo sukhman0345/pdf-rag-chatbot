@@ -1,8 +1,9 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class ChatRequest(BaseModel):
     query: str
+    session_id: str
 
 class SourceDocument(BaseModel):
     page: int
@@ -13,3 +14,4 @@ class SourceDocument(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     sources: List[SourceDocument]
+    session_id: str

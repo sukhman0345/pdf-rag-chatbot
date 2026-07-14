@@ -11,10 +11,11 @@ router = APIRouter(
 @router.post("", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        response = answer_query(request.query)
+        response = answer_query(request.query, session_id=request.session_id)
         return ChatResponse(
             answer=response["answer"],
-            sources=response["sources"]
+            sources=response["sources"],
+            session_id=request.session_id
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -21,15 +21,49 @@ const chatForm = document.getElementById('chatForm');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
+const sessionConfigItem = document.getElementById('sessionConfigItem');
+const sessionValue = document.getElementById('sessionValue');
+
+const uiThreshold = document.getElementById('uiThreshold');
+const uiTopK = document.getElementById('uiTopK');
+const uiModel = document.getElementById('uiModel');
+const uiEmbedding = document.getElementById('uiEmbedding');
+const uiChunkInfo = document.getElementById('uiChunkInfo');
+
 // Global State
 let selectedFile = null;
 let currentActiveDoc = null;
+let currentSessionId = null;
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
     setupUploadHandlers();
     setupChatHandlers();
+    fetchConfig();
 });
+
+// Fetch backend configurations
+function fetchConfig() {
+    fetch(`${API_BASE_URL}/config`)
+        .then(res => res.json())
+        .then(data => {
+            uiThreshold.textContent = `Min ${data.similarity_threshold.toFixed(2)}`;
+            uiTopK.textContent = `Top ${data.top_k} Chunks`;
+            uiModel.textContent = data.llm_model;
+            uiModel.title = data.llm_model;
+            uiEmbedding.textContent = data.embedding_model;
+            uiEmbedding.title = data.embedding_model;
+            uiChunkInfo.textContent = `${data.chunk_size} / ${data.chunk_overlap}`;
+        })
+        .catch(err => {
+            console.error('Failed to load backend configurations:', err);
+            uiThreshold.textContent = 'Offline';
+            uiTopK.textContent = 'Offline';
+            uiModel.textContent = 'Offline';
+            uiEmbedding.textContent = 'Offline';
+            uiChunkInfo.textContent = 'Offline';
+        });
+}
 
 // Setup File Upload Logic
 function setupUploadHandlers() {
@@ -113,10 +147,15 @@ function uploadFile(file) {
                 statusText.textContent = 'PDF indexed successfully!';
                 statusText.style.color = 'var(--color-success)';
                 
-                // Set Active Document State
+                // Set Active Document State & Session State
                 currentActiveDoc = response.filename;
                 activeDocName.textContent = response.filename;
                 docPulse.className = 'pulse-indicator online';
+                
+                currentSessionId = response.session_id;
+                sessionValue.textContent = currentSessionId;
+                sessionValue.title = currentSessionId;
+                sessionConfigItem.style.display = 'flex';
                 
                 // Enable Chat Inputs
                 userInput.disabled = false;
@@ -156,6 +195,10 @@ function handleUploadFailure(message) {
     userInput.disabled = true;
     sendBtn.disabled = true;
     userInput.placeholder = "Upload a PDF first to start chatting...";
+    
+    currentSessionId = null;
+    sessionConfigItem.style.display = 'none';
+    sessionValue.textContent = 'Not Active';
 }
 
 function resetUploadState() {
@@ -173,6 +216,10 @@ function resetUploadState() {
     userInput.disabled = true;
     sendBtn.disabled = true;
     userInput.placeholder = "Upload a PDF first to start chatting...";
+    
+    currentSessionId = null;
+    sessionConfigItem.style.display = 'none';
+    sessionValue.textContent = 'Not Active';
 }
 
 // Setup Chat Logic
@@ -201,7 +248,7 @@ function setupChatHandlers() {
         fetch(`${API_BASE_URL}/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: query })
+            body: JSON.stringify({ query: query, session_id: currentSessionId })
         })
         .then(res => {
             if (!res.ok) {

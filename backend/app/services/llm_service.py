@@ -9,15 +9,21 @@ def get_groq_client():
     return Groq(api_key=api_key)
 
 
-def generate_response(prompt: str, system_prompt: str = None) -> str:
+def generate_response(prompt: str, system_prompt: str = None, history: list = None) -> str:
     """
-    Generate response using Groq API.
+    Generate response using Groq API, with support for conversation history.
     """
     client = get_groq_client()
 
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
+    
+    # Append conversation history
+    if history:
+        for msg in history:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+
     messages.append({"role": "user", "content": prompt})
 
     chat_completion = client.chat.completions.create(

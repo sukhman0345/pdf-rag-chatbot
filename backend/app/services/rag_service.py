@@ -15,10 +15,30 @@ SYSTEM_PROMPT = (
 )
 
 
-def answer_query(query: str) -> dict:
+import uuid
+
+# Memory storage: session_id -> list of message dicts
+sessions_memory = {}
+
+
+def create_session() -> str:
+    """
+    Generate a new unique session_id and initialize its memory history.
+    """
+    session_id = str(uuid.uuid4())
+    sessions_memory[session_id] = []
+    return session_id
+
+
+def answer_query(query: str, session_id: str) -> dict:
     """
     Perform retrieval-augmented generation to answer the query.
     """
+    # Get or initialize history
+    if session_id not in sessions_memory:
+        sessions_memory[session_id] = []
+    history = sessions_memory[session_id]
+
     # 1. Get embedding for the query
     query_embedding = get_query_embedding(query)
 
@@ -27,6 +47,7 @@ def answer_query(query: str) -> dict:
 
     # Debug logging
     print(f"\n[RAG Service Query Log]")
+    print(f"  Session ID: {session_id}")
     print(f"  Query: '{query}'")
     print(f"  Similarity Threshold: {SIMILARITY_THRESHOLD}")
     print(f"  Retrieved Chunks: {len(search_results)}")
@@ -36,6 +57,8 @@ def answer_query(query: str) -> dict:
 
     # 3. If no search results passed the threshold, return the out-of-scope message
     if not search_results:
+        history.append({"role": "user", "content": query})
+        history.append({"role": "assistant", "content": OUT_OF_SCOPE_MESSAGE})
         return {
             "answer": OUT_OF_SCOPE_MESSAGE,
             "sources": []
@@ -51,17 +74,20 @@ def answer_query(query: str) -> dict:
     # 5. Format prompt
     prompt = f"Context:\n{context}\n\nQuestion: {query}\n\nAnswer:"
 
-    # 6. Generate answer from LLM
+    # 6. Generate answer from LLM with memory history
     try:
-        answer = generate_response(prompt, system_prompt=SYSTEM_PROMPT)
+        answer = generate_response(prompt, system_prompt=SYSTEM_PROMPT, history=history)
     except Exception as e:
-        # Fallback or propagate error
         raise e
 
     # Clean up any wrapping quotes from LLM output if it returns the exact string with quotes
     cleaned_answer = answer.strip().strip('"').strip("'")
     if cleaned_answer == OUT_OF_SCOPE_MESSAGE:
         answer = OUT_OF_SCOPE_MESSAGE
+
+    # Save to history
+    history.append({"role": "user", "content": query})
+    history.append({"role": "assistant", "content": answer})
 
     # 7. Format sources with metrics
     sources = []

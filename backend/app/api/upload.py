@@ -3,6 +3,7 @@ from app.services.pdf_service import extract_text_from_pdf
 from app.services.embedding_service import create_embeddings
 from app.utils.chunking import create_chunks
 from app.services.vector_service import vector_store
+from app.services.rag_service import create_session
 import shutil
 import os
 
@@ -36,11 +37,13 @@ async def upload_pdf(file: UploadFile = File(...)):
     embedded_chunks = create_embeddings(chunks)
     vector_store.create_index(embedded_chunks)
 
+    session_id = create_session()
+
     return {
         "message": "PDF uploaded successfully.",
         "filename": file.filename,
         "total_pages": len(pages),
-        # "pages": pages,
         "total_chunks": len(chunks),
-        "total_embeddings": len(embedded_chunks)
+        "total_embeddings": len(embedded_chunks),
+        "session_id": session_id
     } 
