@@ -82,11 +82,33 @@ pdf-rag-chatbot/
 
 ### 2. Start the Frontend
 
-CORS (Cross-Origin Resource Sharing) is enabled on the FastAPI backend, allowing the frontend to communicate with it from any origin.
+CORS (Cross-Origin Resource Sharing) is enabled on the FastAPI backend, allowing the frontend to communicate with it dynamically.
 
-To launch the UI:
-1. Simply double-click **`frontend/index.html`** to open it in your preferred web browser.
-2. Drag and drop any PDF file to upload and start querying!
+To open the user interface, you have two options:
+
+#### Option A: Direct File Opening (No setup required)
+1. Open your File Explorer and navigate to the `frontend/` directory.
+2. Double-click the **`index.html`** file (or right-click and select **Open with** > your preferred web browser like Chrome, Firefox, Edge, etc.).
+
+#### Option B: Running a Local Dev Server (Recommended)
+Running through an HTTP server avoids potential browser restrictions related to loading files via the `file://` protocol. Open a terminal and choose **one** of the following tools:
+
+- **Using Python (built-in)**:
+  ```bash
+  cd frontend
+  python -m http.server 8080
+  ```
+  Then visit: **[http://localhost:8080](http://localhost:8080)** in your browser.
+
+- **Using Node.js / npx**:
+  ```bash
+  cd frontend
+  npx http-server -p 8080
+  ```
+  Then visit: **[http://localhost:8080](http://localhost:8080)** in your browser.
+
+- **Using VS Code Live Server Extension**:
+  If you use Visual Studio Code, right-click `frontend/index.html` and click **"Open with Live Server"**.
 
 ---
 
