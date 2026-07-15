@@ -66,7 +66,7 @@ pdf-rag-chatbot/
    GROQ_API_KEY=your_groq_api_key_here
    EMBEDDING_MODEL_NAME=all-MiniLM-L6-v2
    SIMILARITY_THRESHOLD=0.2
-   LLM_MODEL=llama-3.3-70b-specdec
+   LLM_MODEL=llama-3.1-8b-instant
    LLM_TEMPERATURE=0.7
    VECTOR_SEARCH_TOP_K=5
    CHUNK_SIZE=500
