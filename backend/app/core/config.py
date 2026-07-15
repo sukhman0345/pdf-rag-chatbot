@@ -12,7 +12,7 @@ os.makedirs(VECTOR_STORE_FOLDER, exist_ok=True)
 
 # Sentence Transformers Configuration
 EMBEDDING_MODEL_NAME = os.getenv("EMBEDDING_MODEL_NAME", "all-MiniLM-L6-v2")
-SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.3"))
+SIMILARITY_THRESHOLD = float(os.getenv("SIMILARITY_THRESHOLD", "0.0"))
 
 # Groq Configurations
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
