@@ -123,7 +123,7 @@ Used by the frontend client to dynamically fetch configuration parameters and pr
   {
     "similarity_threshold": 0.2,
     "top_k": 5,
-    "llm_model": "llama-3.3-70b-specdec",
+    "llm_model": "llama-3.1-8b-instant",
     "embedding_model": "all-MiniLM-L6-v2",
     "chunk_size": 500,
     "chunk_overlap": 100
